@@ -1,11 +1,4 @@
 <template>
-  <div id="index">
-    <h1></h1>
-  </div>
-</template>
-
-<!--
-<template>
   <div>
     <!-- 新規作成部分 -->
     <div class="row">
@@ -21,7 +14,7 @@
     <!-- リスト表示部分 -->
     <div>
       <ul class="collection">
-        <li v-for="task in tasks" v-if="!task.is_done" v-bind:id="'row_task_' + task.id" class="collection-item">
+        <li v-for="task in $store.state.tasks.tasks" v-if="!task.is_done" v-bind:id="'row_task_' + task.id" class="collection-item">
           <label v-bind:for="'task_' + task.id">
             <input type="checkbox" v-on:change="doneTask(task.id)" v-bind:id="'task_' + task.id" />
             <span>{{ task.name }}</span>
@@ -34,7 +27,7 @@
     <!-- 完了済みタスク一覧 -->
     <div id="finished-tasks" class="display_none">
       <ul class="collection">
-        <li v-for="task in tasks" v-if="task.is_done"v-bind:id="'row_task_' + task.id" class="collection-item">
+        <li v-for="task in $store.state.tasks.tasks" v-if="task.is_done"v-bind:id="'row_task_' + task.id" class="collection-item">
           <label v-bind:for="'task_' + task.id">
             <input type="checkbox" v-bind:id="'task_' + task.id" checked="checked" />
             <span>{{ task.name }}</span>
@@ -44,27 +37,29 @@
     </div>
   </div>
 </template>
--->
 
 <script>
   import axios from 'axios';
+  import index from '../stores/index.js';
 
   export default {
     data: function () {
       return {
-        tasks: [],
         newTask: ''
       }
     },
     mounted: function () {
       this.fetchTasks();
-      console.log("store is", this.$store)
+      console.log("store is", this.$store.tasks)
     },
     methods: {
+      increment : function(){
+        this.$store.tasks.dispatch('incrementOne')
+      },
       fetchTasks: function () {
         axios.get('/api/tasks').then((response) => {
           for(var i = 0; i < response.data.tasks.length; i++) {
-            this.tasks.push(response.data.tasks[i]);
+            this.$store.state.tasks.tasks.push(response.data.tasks[i]);
           }
         }, (error) => {
           console.log(error);
@@ -77,7 +72,7 @@
         if (!this.newTask) return;
 
         axios.post('/api/tasks', { task: { name: this.newTask } }).then((response) => {
-          this.tasks.unshift(response.data.task);
+          this.$store.state.tasks.tasks.unshift(response.data.task);
           this.newTask = '';
         }, (error) => {
           console.log(error);
