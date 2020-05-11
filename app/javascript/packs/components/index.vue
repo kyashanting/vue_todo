@@ -1,6 +1,6 @@
 <template>
   <div id="index">
-    <h1>{{ $store.state.message }}</h1>
+    <h1></h1>
   </div>
 </template>
 
@@ -58,6 +58,7 @@
     },
     mounted: function () {
       this.fetchTasks();
+      console.log("store is", this.$store)
     },
     methods: {
       fetchTasks: function () {
