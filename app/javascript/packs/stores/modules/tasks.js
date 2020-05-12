@@ -4,13 +4,13 @@ export const tasks = {
         tasks: []
     },
     mutations: {
-        increment: function (state) {
+        increment1: function (state) {
             state.count++
         }
     },
     actions: {
         incrementOne: function(context){
-            context.commit('increment')
+            context.commit('increment1')
         }
     }
 }

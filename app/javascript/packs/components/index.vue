@@ -3,7 +3,7 @@
     <!-- 新規作成部分 -->
     <div class="row">
       <div class="col s10 m11">
-        <input v-model="newTask" class="form-control" placeholder="Add your task!!">
+        <input v-model="$store.state.new_task.new_task" class="form-control" placeholder="Add your task!!">
       </div>
       <div class="col s2 m1">
         <div v-on:click="createTask" class="btn-floating waves-effect waves-light red">
@@ -43,11 +43,6 @@
   import index from '../stores/index.js';
 
   export default {
-    data: function () {
-      return {
-        newTask: ''
-      }
-    },
     mounted: function () {
       this.fetchTasks();
       console.log("store is", this.$store.tasks)
@@ -55,6 +50,9 @@
     methods: {
       increment : function(){
         this.$store.tasks.dispatch('incrementOne')
+      },
+      increment2 : function(){
+        this.$store.new_task.dispatch('incrementTwo')
       },
       fetchTasks: function () {
         axios.get('/api/tasks').then((response) => {
@@ -69,11 +67,11 @@
         document.querySelector('#finished-tasks').classList.toggle('display_none');
       },
       createTask: function () {
-        if (!this.newTask) return;
+        if (!this.$store.state.new_task.new_task) return;
 
-        axios.post('/api/tasks', { task: { name: this.newTask } }).then((response) => {
+        axios.post('/api/tasks', { task: { name: this.$store.state.new_task.new_task } }).then((response) => {
           this.$store.state.tasks.tasks.unshift(response.data.task);
-          this.newTask = '';
+          this.$store.state.new_task.new_task = '';
         }, (error) => {
           console.log(error);
         });
